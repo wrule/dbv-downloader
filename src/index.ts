@@ -1,5 +1,6 @@
 import fs from 'fs';
 import axios from 'axios';
+import { JSDOM } from 'jsdom';
 
 async function download(url: string) {
   const filename = url.split('/').pop() as string;
@@ -38,18 +39,22 @@ function batch_download(urls: string[], pool_size = 5) {
   });
 }
 
-function main() {
-  console.log(1234);
-  batch_download([
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-07-03.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-28.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-24.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-20.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-11.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-02.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-05-27.zip',
-    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-05-13.zip',
-  ]);
+async function get_urls() {
+  const response = await axios.get('https://s3-ap-northeast-1.amazonaws.com/data.binance.vision', { params: {
+    delimiter: '/',
+    prefix: 'data/futures/um/daily/klines/ETHUSDT/30m/',
+  } });
+  const document = new JSDOM(response.data).window.document;
+  const urls = Array.from(document.querySelectorAll('Key'))
+    .map((key) => key.innerHTML.trim())
+    .filter((url) => url.toLowerCase().endsWith('.zip'))
+    .map((pathname) => `https://data.binance.vision/${pathname}`);
+  return urls;
+}
+
+async function main() {
+  const urls = await get_urls();
+  await batch_download(urls, 10);
 }
 
 main();
