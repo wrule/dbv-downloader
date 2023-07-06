@@ -49,7 +49,8 @@ async function get_urls(
   const parser = new XMLParser();
   const data = parser.parse(response.data)?.ListBucketResult;
   const urls = ((data?.Contents || []) as any[])
-    .map((item) => item.Key)
+    .map((item) => item?.Key?.toLowerCase() || '')
+    .filter((item) => item.endsWith('.zip'))
     .map((pathname) => `https://data.binance.vision/${pathname}`);
   if (data.IsTruncated)
     urls.push(...(await get_urls(prefix, api, data.NextMarker)));
