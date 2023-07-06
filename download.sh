@@ -1,5 +1,6 @@
 #!/bin/bash
 echo 清理目录...
+rm result.json
 rm download/*.zip
 rm download/*.csv
 rm download/*._csv
