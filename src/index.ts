@@ -7,7 +7,7 @@ async function download(url: string) {
   const filename = url.split('/').pop() as string;
   const response = await axios.get(url, {
     responseType: 'stream',
-    timeout: 60 * 1000,
+    timeout: 1e4,
   });
   const writer = fs.createWriteStream(path.join('download', filename));
   response.data.pipe(writer);
