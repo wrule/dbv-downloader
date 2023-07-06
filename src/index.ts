@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import { JSDOM } from 'jsdom';
+import { XMLParser } from 'fast-xml-parser';
 
 async function download(url: string) {
   const filename = url.split('/').pop() as string;
@@ -39,23 +39,27 @@ function batch_download(urls: string[], pool_size = 5) {
   });
 }
 
-async function get_urls(marker?: string) {
-  const response = await axios.get('https://s3-ap-northeast-1.amazonaws.com/data.binance.vision', { params: {
-    delimiter: '/',
-    prefix: 'data/futures/um/daily/klines/ETHUSDT/30m/',
-    marker,
-  } });
-  const document = new JSDOM(response.data).window.document;
-  const urls = Array.from(document.querySelectorAll('Key'))
-    .map((key) => key.innerHTML.trim())
-    .filter((url) => url.toLowerCase().endsWith('.zip'))
+async function get_urls(
+  prefix = 'data/futures/um/daily/klines/ETHUSDT/30m/',
+  api = 'https://s3-ap-northeast-1.amazonaws.com/data.binance.vision',
+  marker?: string,
+) {
+  const params = { delimiter: '/', prefix, marker };
+  const response = await axios.get(api, { params });
+  const parser = new XMLParser();
+  const data = parser.parse(response.data)?.ListBucketResult;
+  const urls = ((data?.Contents || []) as any[])
+    .map((item) => item.Key)
     .map((pathname) => `https://data.binance.vision/${pathname}`);
+  if (data.IsTruncated)
+    urls.push(...(await get_urls(prefix, api, data.NextMarker)));
   return urls;
 }
 
 async function main() {
-  const urls = await get_urls('data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2022-09-25.zip.CHECKSUM');
-  await batch_download(urls, 20);
+  const urls = await get_urls();
+  console.log(urls.length);
+  // await batch_download(urls, 20);
 }
 
 main();
