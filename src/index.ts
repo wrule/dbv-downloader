@@ -30,6 +30,7 @@ function batch_download(urls: string[], pool_size = 5) {
         pool.push(task);
         try {
           await download(task);
+          console.log((1 - (pool.length + queue.length - 1) / urls.length) * 100, '%');
         } catch (e) { queue.push(task) }
         pool = pool.filter((item) => item !== task);
       }
@@ -39,7 +40,16 @@ function batch_download(urls: string[], pool_size = 5) {
 
 function main() {
   console.log(1234);
-  download('https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-07-03.zip');
+  batch_download([
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-07-03.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-28.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-24.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-20.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-11.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-06-02.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-05-27.zip',
+    'https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-05-13.zip',
+  ]);
 }
 
 main();
