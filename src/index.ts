@@ -16,8 +16,25 @@ async function download(url: string) {
   });
 }
 
-async function batch_download(urls: string[]) {
-
+function batch_download(urls: string[], pool_size = 5) {
+  let pool = [] as string[];
+  const queue = urls.slice();
+  return new Promise<void>((resolve) => {
+    const timer = setInterval(async () => {
+      if (pool.length === 0 && queue.length === 0) {
+        clearInterval(timer);
+        resolve();
+      }
+      if (queue.length > 0 && pool.length < pool_size) {
+        const task = queue.shift() as string;
+        pool.push(task);
+        try {
+          await download(task);
+        } catch (e) { queue.push(task) }
+        pool = pool.filter((item) => item !== task);
+      }
+    }, 10);
+  });
 }
 
 function main() {
