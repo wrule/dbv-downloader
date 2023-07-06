@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 
@@ -9,7 +10,7 @@ async function download(url: string) {
     responseType: 'stream',
     timeout: 60 * 1000,
   });
-  const writer = fs.createWriteStream(filename);
+  const writer = fs.createWriteStream(path.join('download', filename));
   response.data.pipe(writer);
   return new Promise<void>((resolve, reject) => {
     writer.on('finish', resolve);
@@ -54,8 +55,8 @@ async function get_urls(marker?: string) {
 }
 
 async function main() {
-  const urls = await get_urls();
-  await batch_download(urls, 10);
+  const urls = await get_urls('data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2022-09-25.zip.CHECKSUM');
+  await batch_download(urls, 20);
 }
 
 main();
