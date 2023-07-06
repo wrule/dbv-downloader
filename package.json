@@ -6,7 +6,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "dev": "node dist/index.js",
-    "to_json": "node dist/to_json.js"
+    "to_json": "node dist/to_json.js",
+    "merge": "cd download && ./merge.sh"
   },
   "repository": "https://github.com/wrule/dbv-downloader.git",
   "license": "MIT",
