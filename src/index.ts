@@ -49,8 +49,8 @@ async function get_urls(
   const parser = new XMLParser();
   const data = parser.parse(response.data)?.ListBucketResult;
   const urls = ((data?.Contents || []) as any[])
-    .map((item) => item?.Key?.toLowerCase() || '')
-    .filter((item) => item.endsWith('.zip'))
+    .map((item) => item?.Key || '')
+    .filter((item) => item.toLowerCase().endsWith('.zip'))
     .map((pathname) => `https://data.binance.vision/${pathname}`);
   if (data.IsTruncated)
     urls.push(...(await get_urls(prefix, api, data.NextMarker)));
@@ -58,9 +58,12 @@ async function get_urls(
 }
 
 async function main() {
+  console.log('搜集数据地址...');
   const urls = await get_urls();
-  console.log(urls.length);
-  // await batch_download(urls, 20);
+  console.log('搜集到', urls.length, '个数据地址');
+  console.log('开始下载...');
+  await batch_download(urls, 20);
+  console.log('下载完成');
 }
 
 main();
