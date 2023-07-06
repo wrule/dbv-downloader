@@ -16,7 +16,7 @@ function get_lines() {
 
 function main() {
   const lines = get_lines();
-  fs.writeFileSync('download/result.json', JSON.stringify(lines, null, 2), 'utf8');
+  fs.writeFileSync('result.json', JSON.stringify(lines, null, 2), 'utf8');
 }
 
 main();
