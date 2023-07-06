@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "dev": "node dist/index.js"
+    "dev": "node dist/to_json.js"
   },
   "repository": "https://github.com/wrule/dbv-downloader.git",
   "license": "MIT",
