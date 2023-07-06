@@ -39,10 +39,11 @@ function batch_download(urls: string[], pool_size = 5) {
   });
 }
 
-async function get_urls() {
+async function get_urls(marker?: string) {
   const response = await axios.get('https://s3-ap-northeast-1.amazonaws.com/data.binance.vision', { params: {
     delimiter: '/',
     prefix: 'data/futures/um/daily/klines/ETHUSDT/30m/',
+    marker,
   } });
   const document = new JSDOM(response.data).window.document;
   const urls = Array.from(document.querySelectorAll('Key'))
