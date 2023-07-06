@@ -5,7 +5,6 @@ import { JSDOM } from 'jsdom';
 
 async function download(url: string) {
   const filename = url.split('/').pop() as string;
-  console.log('download', filename, '...');
   const response = await axios.get(url, {
     responseType: 'stream',
     timeout: 60 * 1000,
