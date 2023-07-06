@@ -1,7 +1,7 @@
 import fs from 'fs';
 import axios from 'axios';
 
-async function download_zip(url: string) {
+async function download(url: string) {
   const filename = url.split('/').pop() as string;
   console.log('download', filename, '...');
   const response = await axios.get(url, {
@@ -16,9 +16,13 @@ async function download_zip(url: string) {
   });
 }
 
+async function batch_download(urls: string[]) {
+
+}
+
 function main() {
   console.log(1234);
-  download_zip('https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-07-03.zip');
+  download('https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/30m/ETHUSDT-30m-2023-07-03.zip');
 }
 
 main();
