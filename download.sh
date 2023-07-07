@@ -1,12 +1,9 @@
 #!/bin/bash
-echo 清理目录...
+echo 清理数据...
 rm result.json
-rm download/*.zip
-rm download/*.csv
-rm download/*._csv
-rm download/*.json
-npm run download
 cd download
+rm *.zip *.csv *._csv *.json
+npm run download
 unzip '*.zip'
 cat *.csv > result._csv
 rm *.csv
