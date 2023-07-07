@@ -44,6 +44,8 @@ async function get_urls(
   api = 'https://s3-ap-northeast-1.amazonaws.com/data.binance.vision',
   marker?: string,
 ) {
+  console.log(api);
+  console.log(prefix);
   const params = { delimiter: '/', prefix, marker };
   const response = await axios.get(api, { params });
   const parser = new XMLParser();
@@ -59,7 +61,7 @@ async function get_urls(
 
 async function main() {
   console.log('搜集数据地址...');
-  const urls = await get_urls();
+  const urls = await get_urls(process.argv[2], process.argv[3]);
   console.log('搜集到', urls.length, '个数据地址');
   console.log('开始下载...');
   await batch_download(urls, 20);
