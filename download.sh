@@ -10,3 +10,4 @@ rm *.csv
 mv result._csv result.csv
 npm run to_json
 rm *.csv
+echo 下载完成
